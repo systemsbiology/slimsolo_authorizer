@@ -151,6 +151,7 @@ class User < ActiveRecord::Base
 
 public
     
+  has_one :user_profile, :dependent => :destroy
   has_many :lab_memberships, :dependent => :destroy
   has_many :lab_groups, :through => :lab_memberships
   has_many :samples, :foreign_key => "submitted_by_id"
@@ -226,8 +227,19 @@ public
       :firstname => firstname,
       :lastname => lastname,
       :updated_at => updated_at,
-      :lab_group_uris => lab_group_ids.sort.
+      :lab_group_uris => get_lab_group_ids.sort.
         collect {|x| "#{SiteConfig.site_url}/lab_groups/#{x}" }
-    }
+    }.merge(user_profile.detail_hash)
+  end
+
+  def self.all_by_id
+    user_array = User.find(:all)
+
+    user_hash = Hash.new
+    user_array.each do |user|
+      user_hash[user.id] = user
+    end
+
+    return user_hash
   end
 end

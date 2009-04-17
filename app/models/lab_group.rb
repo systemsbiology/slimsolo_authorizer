@@ -1,10 +1,15 @@
 class LabGroup < ActiveRecord::Base
+  has_one :lab_group_profile, :dependent => :destroy
   has_many :lab_memberships, :dependent => :destroy
   has_many :users, :through => :lab_memberships
   has_many :projects, :dependent => :destroy
   has_many :charge_sets, :dependent => :destroy
 
   validates_uniqueness_of :name
+
+  def lab_group_profile
+    LabGroupProfile.find_or_create_by_lab_group_id(self.id)
+  end
 
   def destroy_warning
     charge_sets = ChargeSet.find(:all, :conditions => ["lab_group_id = ?", id])
@@ -28,12 +33,16 @@ class LabGroup < ActiveRecord::Base
     return {
       :id => id,
       :name => name,
-      :file_folder => file_folder,
       :updated_at => updated_at,
       :user_uris => user_ids.sort.
         collect {|x| "#{SiteConfig.site_url}/users/#{x}" },
-      :project_uris => project_ids.sort.
-        collect {|x| "#{SiteConfig.site_url}/projects/#{x}" }
-    }
+    }.merge(lab_group_profile.detail_hash)
+  end
+
+private
+
+  def user_ids
+    LabMembership.find(:all, :conditions => {:lab_group_id => self.id}).
+      collect {|x| x.user_id}
   end
 end

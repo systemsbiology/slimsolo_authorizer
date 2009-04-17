@@ -23,7 +23,10 @@ describe "LabGroup" do
   end
 
   it "should provide a hash of summary attributes" do
-    lab_group = create_lab_group(:name => "Fungus Group")
+    lab_group = LabGroup.new(
+      :name => "Fungus Group",
+      :updated_at => DateTime.now
+    )
 
     lab_group.summary_hash.should == {
       :id => lab_group.id,
@@ -34,24 +37,31 @@ describe "LabGroup" do
   end
 
   it "should provide a hash of detailed attributes" do
-    lab_group = create_lab_group(
+    lab_group = LabGroup.new(
       :name => "Fungus Group",
-      :file_folder => "fungus"
+      :updated_at => DateTime.now
     )
-    user_1 = create_user(:lab_groups => [lab_group])
-    user_2 = create_user(:lab_groups => [lab_group])
-    project_1 = create_project(:lab_group => lab_group)
-    project_2 = create_project(:lab_group => lab_group)
+    user_1 = mock_model(User, :lab_groups => [lab_group])
+    user_2 = mock_model(User, :lab_groups => [lab_group])
+
+    lab_membership_1 = LabMembership.new(:lab_group_id => lab_group.id, :user_id => user_1.id)
+    lab_membership_2 = LabMembership.new(:lab_group_id => lab_group.id, :user_id => user_2.id)
+
+    LabMembership.should_receive(:find).
+      with(:all, :conditions => {:lab_group_id => lab_group.id}).
+      and_return([lab_membership_1, lab_membership_2])
+
+    profile = mock("Profile", :detail_hash => {:a => "b", :c => "d"})
+    lab_group.should_receive(:lab_group_profile).and_return(profile)
 
     lab_group.detail_hash.should == {
       :id => lab_group.id,
       :name => "Fungus Group",
-      :file_folder => "fungus",
       :updated_at => lab_group.updated_at,
       :user_uris => ["http://example.com/users/#{user_1.id}",
                      "http://example.com/users/#{user_2.id}"],
-      :project_uris => ["http://example.com/projects/#{project_1.id}",
-                        "http://example.com/projects/#{project_2.id}"]
+      :a => "b",
+      :c => "d"
     }
   end
 end
