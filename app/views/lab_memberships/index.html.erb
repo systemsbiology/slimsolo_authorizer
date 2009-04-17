@@ -1,0 +1,23 @@
+<h1>Listing Lab Memberships for <%=h @user.fullname %></h1>
+
+<p><%= link_to 'New lab_membership', new_user_lab_membership_path %></p>
+
+<table id="table" class="sortable" cellpadding="0" cellspacing="0" border="0">
+  <thead>
+    <tr>
+      <th><h3>Lab Group</h3></th>
+      <th class="nosort"><h3>Edit</h3></th>
+      <th class="nosort"><h3>Destroy</h3></th>
+    </tr>
+  </thead>
+<% for lab_membership in @lab_memberships %>
+  <tr>
+    <td><%=h lab_membership.lab_group.name %></td>
+    <td><%= link_to 'Edit', edit_user_lab_membership_path(@user, lab_membership) %></td>
+    <td><%= link_to 'Destroy', user_lab_membership_path(@user, lab_membership),
+                :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= render :partial => 'shared/tinytable', :locals => {:sort_column => 0} %>

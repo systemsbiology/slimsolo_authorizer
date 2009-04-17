@@ -1,0 +1,11 @@
+<%= error_messages_for 'lab_group', 'lab_group_profile' %>
+
+<!--[form:lab_group]-->
+<p><label for="lab_group_name">Name</label><br/>
+<%= text_field 'lab_group', 'name'  %></p>
+
+<%= render :partial => "lab_group_profiles/form", :locals => {:lab_group_profile => @lab_group_profile} %>
+
+<%= hidden_field 'lab_group', 'lock_version' %>
+<!--[eoform:lab_group]-->
+

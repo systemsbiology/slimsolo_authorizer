@@ -1,0 +1,39 @@
+<h2>Listing Users</h2>
+
+<p><%= link_to 'Register a new user', new_registration_path %></p>
+
+<% if @users.size > 0 %>
+  <table id="table" class="sortable" cellpadding="0" cellspacing="0" border="0">
+    <thead>
+      <tr>
+        <th><h3>Name</h3></th>
+        <th><h3>Login</h3></th>
+        <th><h3>Lab Memberships</h3></th>
+        <% UserProfile.index_columns.each do |c| %>
+          <th><h3><%= c.humanize %></h3></th>
+        <% end %>
+        <th class="nosort"><h3>Edit</h3></th>
+        <th class="nosort"><h3>Destroy</h3></th>
+      </tr>
+    </thead>
+    <% @users.each do |user| %>
+      <% profile = user.user_profile %>
+      <tr>
+        <td><%=h user.lastname %>, <%=h user.firstname%></td>
+        <td><%=h user.login %></td>
+        <td><%= link_to 'Lab Memberships', user_lab_memberships_path(user) %>
+        <% UserProfile.index_columns.each do |c| %>
+          <td><%=h profile.send(c) %></td>
+        <% end %>
+        <td><%= link_to 'Edit', edit_user_path(user) %></td>
+        <td><%= link_to 'Destroy', user, :confirm => "Are you sure you want to destroy " + 
+                                    "the user #{user.fullname}",
+                        :method => :delete %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= render :partial => 'shared/tinytable', :locals => {:sort_column => 0} %>
+<% else %>
+    <p>There are currently no users.</p>
+<% end %>
