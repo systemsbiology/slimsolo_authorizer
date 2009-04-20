@@ -1,0 +1,85 @@
+=SLIMsolo Authorizer
+
+This plugin/engine provides:
+
+1. Authentication based on restful_authentication (http://github.com/technoweenie/restful-authentication)
+2. Very simple authorization by role
+3. Management of shared lab groups and users in the parent application's database.
+
+It is an alternative to SLIMcore Authorizer (http://github.com/bmarzolf/slimcore_authorizer), 
+which allows for single sign-on capabilities between applications via RubyCAS-server, and 
+shared users and lab groups using SLIMcore (http://github.com/bmarzolf/slimcore).
+
+Note: This was built for Rails 2.3.2 apps, so other versions may require some tinkering.
+
+==Quickstart
+
+Install Rails Engines, by running this in your app root:
+
+  script/plugin install git://github.com/lazyatom/engines.git
+
+Then add this to your config/environment.rb as directed by the Engines instructions:
+
+  require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
+
+Install SLIMsolo Authorizer:
+
+  script/plugin install git://github.com/bmarzolf/slimsolo_authorizer.git
+  script/generate slimsolo_authorizer .
+  rake db:migrate
+
+Then add this to your app/controllers/application_controller.rb:
+
+  include AuthenticatedSystem 
+  include Authorization
+
+Copy config/application.yml.example to application.yml, but it's not necessary to configure the 
+rubycas and slimcore settings since these won't be used with slimsolo_authorizer.
+
+Edit your application layout (typically app/views/layout/application.html.erb) to include the 
+following in the <head></head> section:
+
+  <%= stylesheet_link_tag 'tinytable.css' %>
+  <%= javascript_include_tag 'tinytable-packed' %>
+
+Run:
+
+  script/server
+
+And you should be able to navigate to http://localhost:3000/users and 
+http://localhost:3000/lab_groups to manage users and lab groups.
+
+==Using Authentication and Authorization
+
+Authenticate on your own controllers by adding:
+
+  before_filter :login_required
+
+Check authorization in controllers using:
+
+  before_filter :staff_or_admin_required  # staff or admin access
+
+or
+
+  before_filter :admin_required  # admin-only
+
+==User and Lab Group Interfaces
+
+Link to the user and lab group management interfaces from your app like:
+
+  <%= link_to 'Users', users_path %>
+  <%= link_to 'Lab Groups', lab_groups_path %>
+
+==Logout
+
+Add the following link wherever it would be appropriate to have a link to log out:
+
+  <%= link_to "logout", :controller => 'sessions', :action => 'destroy' %>
+
+==User Profiles and Lab Group Profiles
+
+In order to allow application-specific user and lab group data, SLIMsolo Authorizer adds 
+two models to your application, UserProfile and LabGroupProfile. Each UserProfile and 
+LabGroupProfile references a User or LabGroup, respectively.
+
+Copyright (c) 2009 Institute for Systems Biology
