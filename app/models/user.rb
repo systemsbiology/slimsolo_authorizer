@@ -161,13 +161,13 @@ public
   def fullname
     "#{self.firstname} #{self.lastname}"
   end
-  
+ 
   def staff_or_admin?
-    role == "staff" || role == "admin"
-  end
+    UserProfile.find_or_create_by_user_id(id).staff_or_admin?
+  end 
   
   def admin?
-    role == "admin"
+    UserProfile.find_or_create_by_user_id(id).admin?
   end
   
   # Returns an Array of the ids of quality traces the user has access to
