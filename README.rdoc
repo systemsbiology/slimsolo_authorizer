@@ -6,9 +6,9 @@ This plugin/engine provides:
 2. Very simple authorization by role
 3. Management of shared lab groups and users in the parent application's database.
 
-It is an alternative to SLIMcore Authorizer (http://github.com/bmarzolf/slimcore_authorizer), 
+It is an alternative to SLIMcore Authorizer (http://github.com/systemsbiology/slimcore_authorizer), 
 which allows for single sign-on capabilities between applications via RubyCAS-server, and 
-shared users and lab groups using SLIMcore (http://github.com/bmarzolf/slimcore).
+shared users and lab groups using SLIMcore (http://github.com/systemsbiology/slimcore).
 
 Note: This was built for Rails 2.3.2 apps, so other versions may require some tinkering.
 
@@ -24,7 +24,7 @@ Then add this to your config/environment.rb as directed by the Engines instructi
 
 Install SLIMsolo Authorizer:
 
-  script/plugin install git://github.com/bmarzolf/slimsolo_authorizer.git
+  script/plugin install git://github.com/systemsbiology/slimsolo_authorizer.git
   script/generate slimsolo_authorizer .
   rake db:migrate
 
